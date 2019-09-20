@@ -17,11 +17,11 @@ def copy():
 
 
 class ExcelData:
-    def __init__(self,keyArray,result,type):
+    def __init__(self,keyArray,result,type,compareType=''):
         self.keyArray=keyArray
         self.result=result
         self.type=type
-
+        self.compareType=compareType
 def getExcelData(excelUrl):
     datas=[]
     excel = xlrd.open_workbook(excelUrl)
@@ -35,49 +35,64 @@ def getExcelData(excelUrl):
         keyArray=str(table.cell_value(i,0)).split('$')#不锈钢$地漏
         result=str(table.cell_value(i,2))#25     价格
         type=str(table.cell_value(i,1))#DN50  规格型号
-        data=ExcelData(keyArray,result,type)
+        compareType=str(table.cell_value(i,3))#0 1 匹配方式 1是完全匹配 比如 水==水
+        data=ExcelData(keyArray,result,type,compareType)
         datas.append(data)
 
     return datas
 
 def getresult(str):
-    print(str)
     datas= getExcelData(excelUrl)
 
-    result=''
+    dataResult=ExcelData('','','')
     contains_key=False
     for data in datas:
 
         for key in data.keyArray:
-            if(key in str):
-                contains_key=True
-                continue
-            else:
-                contains_key=False
-                break
+            if(data.compareType=='1.0'):
+                if(key==str):
+                    contains_key=True
+                    break
+                else:
+                    contains_key=False
+            elif(data.compareType==''):
+                if(key in str):
+                    contains_key=True
+                    continue
+                else:
+                    contains_key=False
+                    break
         if(contains_key):
-            result=data.result
+            dataResult=data
+            break
 
-    return result
+    return dataResult
 
 #判断规格型号是否对应
-def getresult_2(str):
-    print(str)
+def getresult_2(name,type):
+    print(type)
     datas= getExcelData(excelUrl)
 
     result=''
-    contains_key=False
+    resultDatas=[]
     for data in datas:
+        contains_key = False
 
-        for key in data.type:
-            if(str in key):
-                contains_key=True
+        for key in data.keyArray:
+            if(key in name):
+                contains_key = True
                 continue
             else:
-                contains_key=False
+                contains_key = False
                 break
         if(contains_key):
-            result=data.result
+            resultDatas.append(data)
+
+    for d in resultDatas:
+        if (d.type in type or type == d.type):
+            result=d.result
+        elif(d.type in name):
+            result=d.result
 
     return result
 
@@ -93,12 +108,13 @@ def Do():
         while (maxTime > 0):
             maxTime = maxTime - 0.5
             time.sleep(0.5)
-            print('doing')
+            #print('doing')
             copy()
 
         targetName=pyperclip.paste()
-        result = getresult(pyperclip.paste())
-        if (result == ''):
+
+        dataResult=getresult(pyperclip.paste())
+        if (dataResult.result == ''):
             print('没有这个:' + pyperclip.paste() + ' ，需更新表格')
             # 没有找到这个 跳过 to do ---------------------
             tapkey(k.escape_key)
@@ -107,26 +123,72 @@ def Do():
             tapkey(k.enter_key)
             return
         else:
-            print('find')
-            tapkey(k.enter_key,5)
-            k.type_string(result)
-            tapkey(k.enter_key)
-            tapkey(k.escape_key)
-            tapkey(k.left_key,6)
-            tapkey(k.enter_key)
 
-            return
-            #判断型号 TODO---------------------
-            while (maxTime > 0):
-                maxTime = maxTime - 0.5
-                time.sleep(0.5)
-                print('doing')
-                copy()
-            r2 = getresult_2(pyperclip.paste())
-            if(r2==''):
-                print('not same type')
+            if(dataResult.type==''):
+                print('无规格直接输入')
+                tapkey(k.enter_key, 5)
+                k.type_string(dataResult.result)
+                tapkey(k.enter_key)
+                time.sleep(2)
+
+                tapkey(k.escape_key)
+                tapkey(k.left_key, 6)
+                tapkey(k.enter_key)
             else:
-                print('same')
+                print('表格匹配名字，判断且有规格')
+                tapkey(k.enter_key)
+                maxTime = 3
+                while (maxTime > 0):
+                    maxTime = maxTime - 0.5
+                    time.sleep(0.5)
+                    #print('doing')
+                    copy()
+                targetType = pyperclip.paste()
+                if(targetType==targetName):#相等则targetType为空 规格型号没填 复制为上次结果
+                    targetType=''
+                result_2 = getresult_2(targetName, targetType)
+                if(result_2==''):
+                    print('无匹配   '+targetName+'   无匹配   '+targetType)
+                    tapkey(k.escape_key)
+                    tapkey(k.down_key)
+                    tapkey(k.left_key,2)
+                    tapkey(k.enter_key)
+                else:
+                    print('规格匹配输入'+targetName+'     '+targetType)
+                    tapkey(k.enter_key,4)
+                    k.type_string(result_2)
+                    tapkey(k.enter_key)
+                    time.sleep(2)
+                    tapkey(k.escape_key)
+                    tapkey(k.left_key, 6)
+                    tapkey(k.enter_key)
+
+
+            #判断型号 TODO---------------------
+            return
+            # tapkey(k.enter_key)
+            # while (maxTime > 0):
+            #     maxTime = maxTime - 0.5
+            #     time.sleep(0.5)
+            #     print('doing')
+            #     copy()
+            # targetType = pyperclip.paste()
+            # result_2= getresult_2(targetName, targetType)
+            # if(result_2==''):
+            #
+            # if(targetType==''):
+            #     tapkey(k.escape_key)
+            #     tapkey(k.down_key)
+            #     tapkey(k.left_key)
+            #     tapkey(k.enter_key)
+            #
+            # else:
+            #
+            #     r2 = getresult_2(targetName,targetType)
+            #     if(r2==''):
+            #         print('not same type')
+            #     else:
+            #         print('same')
 
             # 找到了 输入 to do ---------------------
             # k.tap_key(k.escape_key)
@@ -160,7 +222,7 @@ if __name__ == '__main__':
     k = PyKeyboard()
     m = PyMouse()
     start=False
-    excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
+    excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"#to do-------------
     threads = []
     t2 = threading.Thread(target=main, args=())
     threads.append(t2)
