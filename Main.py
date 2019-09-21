@@ -34,7 +34,7 @@ def getExcelData(excelUrl):
         if(i==0): continue
         keyArray=str(table.cell_value(i,0)).split('$')#不锈钢$地漏
         result=str(table.cell_value(i,2))#25     价格
-        type=str(table.cell_value(i,1))#DN50  规格型号
+        type=str(table.cell_value(i,4))#DN50  规格型号
         compareType=str(table.cell_value(i,3))#0 1 匹配方式 1是完全匹配 比如 水==水
         data=ExcelData(keyArray,result,type,compareType)
         datas.append(data)
@@ -49,6 +49,9 @@ def getresult(str):
     for data in datas:
 
         for key in data.keyArray:
+            if(key==''):
+                contains_key=False
+                continue
             if(data.compareType=='1.0'):
                 if(key==str):
                     contains_key=True
@@ -64,7 +67,7 @@ def getresult(str):
                     break
         if(contains_key):
             dataResult=data
-            break
+
 
     return dataResult
 
@@ -79,6 +82,7 @@ def getresult_2(name,type):
         contains_key = False
 
         for key in data.keyArray:
+            if(key==''): continue
             if(key in name):
                 contains_key = True
                 continue
@@ -99,7 +103,7 @@ def getresult_2(name,type):
 def tapkey(key,count=1):
     for i in range(0,count):
         k.tap_key(key)
-        time.sleep(0.1)
+        time.sleep(0.2)
 
 def Do():
     if start:
@@ -112,6 +116,7 @@ def Do():
             copy()
 
         targetName=pyperclip.paste()
+
 
         dataResult=getresult(pyperclip.paste())
         if (dataResult.result == ''):
@@ -129,7 +134,7 @@ def Do():
                 tapkey(k.enter_key, 5)
                 k.type_string(dataResult.result)
                 tapkey(k.enter_key)
-                time.sleep(2)
+                time.sleep(6)
 
                 tapkey(k.escape_key)
                 tapkey(k.left_key, 6)
@@ -155,12 +160,12 @@ def Do():
                     tapkey(k.enter_key)
                 else:
                     print('规格匹配输入'+targetName+'     '+targetType)
-                    tapkey(k.enter_key,4)
+                    tapkey(k.enter_key,4)#适当修改
                     k.type_string(result_2)
                     tapkey(k.enter_key)
-                    time.sleep(2)
+                    time.sleep(6)
                     tapkey(k.escape_key)
-                    tapkey(k.left_key, 6)
+                    tapkey(k.left_key, 6)#适当修改
                     tapkey(k.enter_key)
 
 
@@ -222,7 +227,7 @@ if __name__ == '__main__':
     k = PyKeyboard()
     m = PyMouse()
     start=False
-    excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"#to do-------------
+    excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
     threads = []
     t2 = threading.Thread(target=main, args=())
     threads.append(t2)
