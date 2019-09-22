@@ -5,15 +5,28 @@ import time
 import pyHook
 import pythoncom
 import xlrd
+import xlwt
 import  pyperclip
 from pynput import mouse,keyboard
 import threading
 import sys
+from xlutils.copy import copy as excel_copy
 def copy():
 
     k.press_key(k.control_l_key)
     k.tap_key("C")
     k.release_key(k.control_l_key)
+
+def getCopy(maxTime=3):
+    #maxTime = 3  # 3秒复制 调用copy() 不管结果对错
+    while (maxTime > 0):
+        maxTime = maxTime - 0.5
+        time.sleep(0.5)
+        # print('doing')
+        copy()
+
+    result = pyperclip.paste()
+    return result
 
 
 class ExcelData:
@@ -203,6 +216,19 @@ def Do():
             # k.tap_key(k.enter_key)
 
 
+
+def saveToExcel(name,type,value):
+    saveworkbook = xlrd.open_workbook(saveExcelUrl)
+    wb = excel_copy(saveworkbook)  # 利用xlutils.copy下的copy函数复制
+    ws = wb.get_sheet(0)  # 获取表单0
+    global rowMaxCount
+    ws.write(rowMaxCount, 0, name)
+    ws.write(rowMaxCount, 1, type)
+    ws.write(rowMaxCount, 2, value)
+
+    wb.save(saveExcelUrl)
+    rowMaxCount=rowMaxCount+1
+
 #我的代码
 def onpressed(Key):
     while True:
@@ -213,7 +239,24 @@ def onpressed(Key):
             print('go')
         if (Key==keyboard.Key.f3):#结束
             sys.exit()
+        if (Key == keyboard.Key.f4):
+            targetName = getCopy(1)
+            tapkey(k.enter_key)
+            targetType = getCopy(1)
+            tapkey(k.enter_key, 4)
+            targetValue=getCopy(1)
+            if(targetType==targetName):
+                targetType=''
+            saveToExcel(targetName,targetType,targetValue)
+            tapkey(k.enter_key)
+            tapkey(k.escape_key)
+            tapkey(k.left_key,6)
+            tapkey(k.enter_key)
+            print('save  '+targetName)
+
         return True
+
+
 
 
 def main():
@@ -226,8 +269,15 @@ def main():
 if __name__ == '__main__':
     k = PyKeyboard()
     m = PyMouse()
+
     start=False
-    excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
+    #excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
+    excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
+    saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xls"  # to do-------------
+    saveworkbook = xlrd.open_workbook(saveExcelUrl)
+    rowMaxCount=saveworkbook.sheets()[0].nrows
+
+
     threads = []
     t2 = threading.Thread(target=main, args=())
     threads.append(t2)
