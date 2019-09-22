@@ -30,10 +30,10 @@ def getCopy(maxTime=3):
 
 
 class ExcelData:
-    def __init__(self,keyArray,result,type,compareType=''):
+    def __init__(self,keyArray,result,typeArray,compareType=''):
         self.keyArray=keyArray
         self.result=result
-        self.type=type
+        self.typeArray=typeArray
         self.compareType=compareType
 def getExcelData(excelUrl):
     datas=[]
@@ -47,15 +47,16 @@ def getExcelData(excelUrl):
         if(i==0): continue
         keyArray=str(table.cell_value(i,0)).split('$')#不锈钢$地漏
         result=str(table.cell_value(i,2))#25     价格
-        type=str(table.cell_value(i,4))#DN50  规格型号
+
+        typeArray=(table.cell_value(i,4).split('$'))#有吊顶 DN25 规格型号
         compareType=str(table.cell_value(i,3))#0 1 匹配方式 1是完全匹配 比如 水==水
-        data=ExcelData(keyArray,result,type,compareType)
+        data=ExcelData(keyArray,result,typeArray,compareType)
         datas.append(data)
 
     return datas
 
 def getresult(str):
-    datas= getExcelData(excelUrl)
+    #datas= getExcelData(excelUrl)
 
     dataResult=ExcelData('','','')
     contains_key=False
@@ -87,7 +88,6 @@ def getresult(str):
 #判断规格型号是否对应
 def getresult_2(name,type):
     print(type)
-    datas= getExcelData(excelUrl)
 
     result=''
     resultDatas=[]
@@ -104,12 +104,16 @@ def getresult_2(name,type):
                 break
         if(contains_key):
             resultDatas.append(data)
-
     for d in resultDatas:
-        if (d.type in type or type == d.type):
-            result=d.result
-        elif(d.type in name):
-            result=d.result
+        for datatype in d.typeArray:
+            if(datatype in name):
+                result=d.result
+            else:
+                if(datatype not in type):
+                    result=''
+                    break
+                if (datatype in type or type == datatype):
+                    result=d.result
 
     return result
 
@@ -142,7 +146,7 @@ def Do():
             return
         else:
 
-            if(dataResult.type==''):
+            if(dataResult.typeArray==''):
                 print('无规格直接输入')
                 tapkey(k.enter_key, 5)
                 k.type_string(dataResult.result)
@@ -277,6 +281,7 @@ if __name__ == '__main__':
     saveworkbook = xlrd.open_workbook(saveExcelUrl)
     rowMaxCount=saveworkbook.sheets()[0].nrows
 
+    datas= getExcelData(excelUrl)
 
     threads = []
     t2 = threading.Thread(target=main, args=())
