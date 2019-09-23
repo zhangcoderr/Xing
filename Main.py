@@ -10,7 +10,8 @@ import  pyperclip
 from pynput import mouse,keyboard
 import threading
 import sys
-from xlutils.copy import copy as excel_copy
+from openpyxl import Workbook,load_workbook
+
 def copy():
 
     k.press_key(k.control_l_key)
@@ -105,15 +106,25 @@ def getresult_2(name,type):
         if(contains_key):
             resultDatas.append(data)
     for d in resultDatas:
+        hasResult = False
         for datatype in d.typeArray:
             if(datatype in name):
-                result=d.result
+                hasResult=True
+                continue
             else:
-                if(datatype not in type):
-                    result=''
-                    break
-                if (datatype in type or type == datatype):
-                    result=d.result
+                hasResult=False
+            if (datatype in type or type == datatype):
+                hasResult=True
+            else:
+                hasResult=False
+                break
+        if(hasResult):
+            result=d.result
+    print('-------')
+    print(d.keyArray)
+    print(d.typeArray)
+    print(d.result)
+    print('-------')
 
     return result
 
@@ -222,13 +233,17 @@ def Do():
 
 
 def saveToExcel(name,type,value):
-    saveworkbook = xlrd.open_workbook(saveExcelUrl)
-    wb = excel_copy(saveworkbook)  # 利用xlutils.copy下的copy函数复制
-    ws = wb.get_sheet(0)  # 获取表单0
+    #saveworkbook = xlrd.open_workbook(saveExcelUrl)
+    #wb = excel_copy(saveworkbook)  # 利用xlutils.copy下的copy函数复制
+    wb= load_workbook(filename=saveExcelUrl)
+    worksheet=wb.active
+    worksheet=wb['Sheet1']
+
     global rowMaxCount
-    ws.write(rowMaxCount, 0, name)
-    ws.write(rowMaxCount, 1, type)
-    ws.write(rowMaxCount, 2, value)
+    #print(rowMaxCount)
+    worksheet.cell(row=rowMaxCount+1,column=1,value=name)
+    worksheet.cell(row=rowMaxCount+1,column=2,value=type)
+    worksheet.cell(row=rowMaxCount+1,column=3,value=value)
 
     wb.save(saveExcelUrl)
     rowMaxCount=rowMaxCount+1
@@ -244,19 +259,20 @@ def onpressed(Key):
         if (Key==keyboard.Key.f3):#结束
             sys.exit()
         if (Key == keyboard.Key.f4):
-            targetName = getCopy(1)
-            tapkey(k.enter_key)
-            targetType = getCopy(1)
-            tapkey(k.enter_key, 4)
-            targetValue=getCopy(1)
-            if(targetType==targetName):
-                targetType=''
-            saveToExcel(targetName,targetType,targetValue)
-            tapkey(k.enter_key)
-            tapkey(k.escape_key)
-            tapkey(k.left_key,6)
-            tapkey(k.enter_key)
-            print('save  '+targetName)
+            if(not start):
+                targetName = getCopy(1)
+                tapkey(k.enter_key)
+                targetType = getCopy(1)
+                tapkey(k.enter_key, 4)
+                targetValue=getCopy(1)
+                if(targetType==targetName):
+                    targetType=''
+                saveToExcel(targetName,targetType,targetValue)
+                tapkey(k.enter_key)
+                tapkey(k.escape_key)
+                tapkey(k.left_key,6)
+                tapkey(k.enter_key)
+                print('save  '+targetName)
 
         return True
 
@@ -275,9 +291,10 @@ if __name__ == '__main__':
     m = PyMouse()
 
     start=False
-    #excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
-    excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
-    saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xls"  # to do-------------
+    excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
+    #excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
+    #saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xls"  # to do-------------
+    saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
     saveworkbook = xlrd.open_workbook(saveExcelUrl)
     rowMaxCount=saveworkbook.sheets()[0].nrows
 
