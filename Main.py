@@ -83,7 +83,7 @@ def getresult(str):
         if(contains_key):
             dataResult=data
 
-
+    #print(dataResult)
     return dataResult
 
 #判断规格型号是否对应
@@ -103,7 +103,7 @@ def getresult_2(name,type):
             else:
                 contains_key = False
                 break
-        if(contains_key):
+        if(contains_key and data.compareType==''):
             resultDatas.append(data)
     for d in resultDatas:
         hasResult = False
@@ -120,11 +120,11 @@ def getresult_2(name,type):
                 break
         if(hasResult):
             result=d.result
-    print('-------')
-    print(d.keyArray)
-    print(d.typeArray)
-    print(d.result)
-    print('-------')
+    # print('-------')
+    # print(d.keyArray)
+    # print(d.typeArray)
+    # print(d.result)
+    # print('-------')
 
     return result
 
@@ -165,8 +165,8 @@ def Do():
                 time.sleep(6)
 
                 tapkey(k.escape_key)
-                tapkey(k.left_key, 6)
-                tapkey(k.enter_key)
+                tapkey(k.left_key, 10)#适当修改
+                tapkey(k.enter_key,3)#适当修改
             else:
                 print('表格匹配名字，判断且有规格')
                 tapkey(k.enter_key)
@@ -193,8 +193,8 @@ def Do():
                     tapkey(k.enter_key)
                     time.sleep(6)
                     tapkey(k.escape_key)
-                    tapkey(k.left_key, 6)#适当修改
-                    tapkey(k.enter_key)
+                    tapkey(k.left_key, 10)#适当修改
+                    tapkey(k.enter_key,3)#适当修改
 
 
             #判断型号 TODO---------------------
