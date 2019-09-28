@@ -73,7 +73,8 @@ def getresult(str):
                     break
                 else:
                     contains_key=False
-            elif(data.compareType==''):
+            #elif(data.compareType==''):
+            else:
                 if(key in str):
                     contains_key=True
                     continue
@@ -86,11 +87,37 @@ def getresult(str):
     #print(dataResult)
     return dataResult
 
+def calc_result(data,type,keyword):
+    result=0
+    A=0
+    B=0
+    array=[]
+    try:
+        array=type.split(keyword)
+        A=float(array[0].strip())/1000
+        B=float(array[1].strip())/1000
+        if (data.compareType == '2.0'):
+            calc_array=str(data.result).split('$')
+            X=int(calc_array[0])
+            Y=int(calc_array[1])
+
+            result=A*B*X+Y
+        else:#TODO-----------------------------------
+            result=''
+    except:
+        result=''
+        print('计算规则无法识别')
+    finally:
+        result=str(result)
+    print(result)
+    return result
+
 #判断规格型号是否对应
 def getresult_2(name,type):
     print(type)
 
     result=''
+    result_data=ExcelData('','','')
     resultDatas=[]
     for data in datas:
         contains_key = False
@@ -103,7 +130,7 @@ def getresult_2(name,type):
             else:
                 contains_key = False
                 break
-        if(contains_key and data.compareType==''):
+        if(contains_key and data.compareType!='1.0'):
             resultDatas.append(data)
     for d in resultDatas:
         hasResult = False
@@ -120,12 +147,15 @@ def getresult_2(name,type):
                 break
         if(hasResult):
             result=d.result
+            result_data=d
     # print('-------')
     # print(d.keyArray)
     # print(d.typeArray)
     # print(d.result)
     # print('-------')
+    if(result_data.compareType=='2.0' and result_data.typeArray==['*']):
 
+        result= calc_result(result_data,type,result_data.typeArray[0])
     return result
 
 def tapkey(key,count=1):
@@ -291,10 +321,10 @@ if __name__ == '__main__':
     m = PyMouse()
 
     start=False
-    excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
-    #excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
-    #saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xls"  # to do-------------
-    saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
+    #excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
+    excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
+    saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
+    #saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
     saveworkbook = xlrd.open_workbook(saveExcelUrl)
     rowMaxCount=saveworkbook.sheets()[0].nrows
 
