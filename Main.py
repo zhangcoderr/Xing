@@ -102,6 +102,25 @@ def calc_result(data,type,keyword):
             Y=int(calc_array[1])
 
             result=A*B*X+Y
+        elif(data.compareType=='3.0'):
+            clac_arrays=str(data.result).split('/')
+            calc_array0=clac_arrays[0].split('$')
+            calc_array1=clac_arrays[1].split('$')
+            X=0
+            Y=0
+            if(A*B<=1):
+                X = int(calc_array0[0])
+                Y = int(calc_array0[1])
+            else:
+                X = int(calc_array1[0])
+                Y = int(calc_array1[1])
+            result=A*B*X+Y
+        elif(data.compareType=='4.0'):
+            L=float(array[2].strip())/1000
+            clac=float(data.result)
+            result=(A*B+A*L+B*L)*2*clac
+
+
         else:#TODO-----------------------------------
             result=''
     except:
@@ -153,7 +172,7 @@ def getresult_2(name,type):
     # print(d.typeArray)
     # print(d.result)
     # print('-------')
-    if(result_data.compareType=='2.0' and result_data.typeArray==['*']):
+    if(result_data.compareType=='2.0' or result_data.compareType=='3.0' or result_data.compareType=='4.0'):
 
         result= calc_result(result_data,type,result_data.typeArray[0])
     return result
@@ -195,7 +214,7 @@ def Do():
                 time.sleep(6)
 
                 tapkey(k.escape_key)
-                tapkey(k.left_key, 10)#适当修改
+                tapkey(k.left_key, 11)#适当修改
                 tapkey(k.enter_key,3)#适当修改
             else:
                 print('表格匹配名字，判断且有规格')
@@ -223,7 +242,7 @@ def Do():
                     tapkey(k.enter_key)
                     time.sleep(6)
                     tapkey(k.escape_key)
-                    tapkey(k.left_key, 10)#适当修改
+                    tapkey(k.left_key, 11)#适当修改
                     tapkey(k.enter_key,3)#适当修改
 
 
@@ -321,10 +340,10 @@ if __name__ == '__main__':
     m = PyMouse()
 
     start=False
-    #excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
-    excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
-    saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
-    #saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
+    excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
+    #excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
+    #saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
+    saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
     saveworkbook = xlrd.open_workbook(saveExcelUrl)
     rowMaxCount=saveworkbook.sheets()[0].nrows
 
