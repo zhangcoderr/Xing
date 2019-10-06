@@ -151,6 +151,8 @@ def getresult_2(name,type):
                 break
         if(contains_key and data.compareType!='1.0'):
             resultDatas.append(data)
+        if(len(data.keyArray)==1 and data.keyArray[0]==name and data.compareType=='1.0'):
+            return data.result
     for d in resultDatas:
         hasResult = False
         for datatype in d.typeArray:
@@ -193,8 +195,6 @@ def Do():
             copy()
 
         targetName=pyperclip.paste()
-
-
         dataResult=getresult(pyperclip.paste())
         if (dataResult.result == ''):
             print('没有这个:' + pyperclip.paste() + ' ，需更新表格')
@@ -340,10 +340,10 @@ if __name__ == '__main__':
     m = PyMouse()
 
     start=False
-    excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
-    #excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
-    #saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
-    saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
+    #excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
+    excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
+    saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
+    #saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
     saveworkbook = xlrd.open_workbook(saveExcelUrl)
     rowMaxCount=saveworkbook.sheets()[0].nrows
 
