@@ -151,8 +151,6 @@ def getresult_2(name,type):
                 break
         if(contains_key and data.compareType!='1.0'):
             resultDatas.append(data)
-        if(len(data.keyArray)==1 and data.keyArray[0]==name and data.compareType=='1.0'):
-            return data.result
     for d in resultDatas:
         hasResult = False
         for datatype in d.typeArray:
@@ -169,11 +167,11 @@ def getresult_2(name,type):
         if(hasResult):
             result=d.result
             result_data=d
-    # print('-------')
-    # print(d.keyArray)
-    # print(d.typeArray)
-    # print(d.result)
-    # print('-------')
+    print('-------')
+    print(d.keyArray)
+    print(d.typeArray)
+    print(d.result)
+    print('-------')
     if(result_data.compareType=='2.0' or result_data.compareType=='3.0' or result_data.compareType=='4.0'):
 
         result= calc_result(result_data,type,result_data.typeArray[0])
@@ -195,6 +193,8 @@ def Do():
             copy()
 
         targetName=pyperclip.paste()
+
+
         dataResult=getresult(pyperclip.paste())
         if (dataResult.result == ''):
             print('没有这个:' + pyperclip.paste() + ' ，需更新表格')
@@ -209,6 +209,7 @@ def Do():
             if(dataResult.typeArray==''):
                 print('无规格直接输入')
                 tapkey(k.enter_key, 5)
+
                 k.type_string(dataResult.result)
                 tapkey(k.enter_key)
                 time.sleep(6)
@@ -240,7 +241,7 @@ def Do():
                     tapkey(k.enter_key,4)#适当修改
                     k.type_string(result_2)
                     tapkey(k.enter_key)
-                    time.sleep(6)
+                    time.sleep(3)
                     tapkey(k.escape_key)
                     tapkey(k.left_key, 11)#适当修改
                     tapkey(k.enter_key,3)#适当修改
@@ -307,6 +308,7 @@ def onpressed(Key):
             print('go')
         if (Key==keyboard.Key.f3):#结束
             sys.exit()
+
         if (Key == keyboard.Key.f4):
             if(not start):
                 targetName = getCopy(1)
@@ -340,10 +342,10 @@ if __name__ == '__main__':
     m = PyMouse()
 
     start=False
-    #excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
-    excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
-    saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
-    #saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
+    excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
+    #excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
+    #saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
+    saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
     saveworkbook = xlrd.open_workbook(saveExcelUrl)
     rowMaxCount=saveworkbook.sheets()[0].nrows
 
