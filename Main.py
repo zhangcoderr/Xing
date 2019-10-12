@@ -151,6 +151,8 @@ def getresult_2(name,type):
                 break
         if(contains_key and data.compareType!='1.0'):
             resultDatas.append(data)
+        if(len(data.keyArray)==1 and data.keyArray[0]==name and data.compareType=='1.0'):
+            return data.result
     for d in resultDatas:
         hasResult = False
         for datatype in d.typeArray:
