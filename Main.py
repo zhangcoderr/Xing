@@ -145,6 +145,7 @@ def getresult_2(name,type):
             if(key==''): continue
             if(key in name):
                 contains_key = True
+
                 continue
             else:
                 contains_key = False
@@ -162,6 +163,9 @@ def getresult_2(name,type):
             else:
                 hasResult=False
             if (datatype in type or type == datatype):
+                if(data.typeArray=='0.0' and type!=datatype):#给电力电缆用————————-
+                    hasResult=False
+                    break
                 hasResult=True
             else:
                 hasResult=False
@@ -170,9 +174,9 @@ def getresult_2(name,type):
             result=d.result
             result_data=d
     print('-------')
-    print(d.keyArray)
-    print(d.typeArray)
-    print(d.result)
+    print(result_data.keyArray)
+    print(result_data.typeArray)
+    print(result_data.result)
     print('-------')
     if(result_data.compareType=='2.0' or result_data.compareType=='3.0' or result_data.compareType=='4.0'):
 
