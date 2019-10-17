@@ -368,19 +368,3 @@ if __name__ == '__main__':
 
     with keyboard.Listener(on_press=onpressed) as listener:
         listener.join()
-
-    # hm = pyHook.HookManager()
-    # hm.KeyDown = onKeyboardEvent
-    # hm.HookKeyboard()
-    # pythoncom.PumpMessages(10000)
-
-
-# def onKeyboardEvent(event):
-#     while True:
-#         print(event.Key)
-#         if str(event.Key) == 'Capital':#开始
-#             global start
-#             start=True
-#         if str(event.Key) == 'F3':#结束
-#             sys.exit()
-#         return True
