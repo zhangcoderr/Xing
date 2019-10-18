@@ -119,6 +119,7 @@ def calc_result(data,type,keyword):
             try:
                 L=float(array[2].strip())/1000
             except:
+                print('L不正确！！！！！！')
                 L=1000
             clac=float(data.result)
             result=(A*B+A*L+B*L)*2*clac
