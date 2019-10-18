@@ -119,7 +119,12 @@ def calc_result(data,type,keyword):
             L=float(array[2].strip())/1000
             clac=float(data.result)
             result=(A*B+A*L+B*L)*2*clac
+        elif(data.compareType=='5.0'):
+            calc_array = str(data.result).split('$')
+            X = int(calc_array[0])
+            Y = int(calc_array[1])
 
+            result = A * (B+0.2) * X + Y
 
         else:#TODO-----------------------------------
             result=''
@@ -173,12 +178,12 @@ def getresult_2(name,type):
         if(hasResult):
             result=d.result
             result_data=d
-    print('-------')
-    print(result_data.keyArray)
-    print(result_data.typeArray)
-    print(result_data.result)
-    print('-------')
-    if(result_data.compareType=='2.0' or result_data.compareType=='3.0' or result_data.compareType=='4.0'):
+    # print('-------')
+    # print(result_data.keyArray)
+    # print(result_data.typeArray)
+    # print(result_data.result)
+    # print('-------')
+    if(result_data.compareType=='2.0' or result_data.compareType=='3.0' or result_data.compareType=='4.0' or result_data.compareType=='5.0'):
 
         result= calc_result(result_data,type,result_data.typeArray[0])
     return result
@@ -247,7 +252,7 @@ def Do():
                     tapkey(k.enter_key,4)#适当修改
                     k.type_string(result_2)
                     tapkey(k.enter_key)
-                    time.sleep(3)
+                    time.sleep(5)
                     tapkey(k.escape_key)
                     tapkey(k.left_key, 11)#适当修改
                     tapkey(k.enter_key,3)#适当修改
@@ -368,3 +373,19 @@ if __name__ == '__main__':
 
     with keyboard.Listener(on_press=onpressed) as listener:
         listener.join()
+
+    # hm = pyHook.HookManager()
+    # hm.KeyDown = onKeyboardEvent
+    # hm.HookKeyboard()
+    # pythoncom.PumpMessages(10000)
+
+
+# def onKeyboardEvent(event):
+#     while True:
+#         print(event.Key)
+#         if str(event.Key) == 'Capital':#开始
+#             global start
+#             start=True
+#         if str(event.Key) == 'F3':#结束
+#             sys.exit()
+#         return True
