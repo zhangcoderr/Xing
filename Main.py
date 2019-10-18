@@ -358,10 +358,10 @@ if __name__ == '__main__':
     m = PyMouse()
 
     start=False
-    excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
-    #excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
-    #saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
-    saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
+    #excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
+    excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
+    saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
+    #saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
     saveworkbook = xlrd.open_workbook(saveExcelUrl)
     rowMaxCount=saveworkbook.sheets()[0].nrows
 
