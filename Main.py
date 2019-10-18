@@ -116,7 +116,10 @@ def calc_result(data,type,keyword):
                 Y = int(calc_array1[1])
             result=A*B*X+Y
         elif(data.compareType=='4.0'):
-            L=float(array[2].strip())/1000
+            try:
+                L=float(array[2].strip())/1000
+            except:
+                L=1000
             clac=float(data.result)
             result=(A*B+A*L+B*L)*2*clac
         elif(data.compareType=='5.0'):
@@ -131,6 +134,7 @@ def calc_result(data,type,keyword):
     except:
         result=''
         print('计算规则无法识别')
+        print('key:'+keyword)
     finally:
         result=str(result)
     print(result)
