@@ -119,8 +119,8 @@ def calc_result(data,type,keyword):
             try:
                 L=float(array[2].strip())/1000
             except:
-                print('L不正确！！！！！！')
-                L=1000
+                print('无法找到L！！！！！！')
+                L=1
             clac=float(data.result)
             result=(A*B+A*L+B*L)*2*clac
         elif(data.compareType=='5.0'):
@@ -358,10 +358,10 @@ if __name__ == '__main__':
     m = PyMouse()
 
     start=False
-    #excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
-    excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
-    saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
-    #saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
+    excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
+    #excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
+    #saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
+    saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
     saveworkbook = xlrd.open_workbook(saveExcelUrl)
     rowMaxCount=saveworkbook.sheets()[0].nrows
 
@@ -379,18 +379,3 @@ if __name__ == '__main__':
     with keyboard.Listener(on_press=onpressed) as listener:
         listener.join()
 
-    # hm = pyHook.HookManager()
-    # hm.KeyDown = onKeyboardEvent
-    # hm.HookKeyboard()
-    # pythoncom.PumpMessages(10000)
-
-
-# def onKeyboardEvent(event):
-#     while True:
-#         print(event.Key)
-#         if str(event.Key) == 'Capital':#开始
-#             global start
-#             start=True
-#         if str(event.Key) == 'F3':#结束
-#             sys.exit()
-#         return True
