@@ -173,7 +173,7 @@ def getresult_2(name,type):
             else:
                 hasResult=False
             if (datatype in type or type == datatype):
-                if(data.typeArray=='0.0' and type!=datatype):#给电力电缆用————————-
+                if(data.compareType=='0.0' and type!=datatype):#给电力电缆用————————-
                     hasResult=False
                     break
                 hasResult=True
@@ -378,4 +378,5 @@ if __name__ == '__main__':
 
     with keyboard.Listener(on_press=onpressed) as listener:
         listener.join()
+
 
