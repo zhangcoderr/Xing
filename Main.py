@@ -15,10 +15,10 @@ from openpyxl import Workbook,load_workbook
 def copy():
 
     k.press_key(k.control_l_key)
-    k.tap_key("C")
+    k.tap_key("c")#改小写！！！！ 大写的话由于单进程会触发shift键 ctrl键就失效了
     k.release_key(k.control_l_key)
 
-def getCopy(maxTime=3):
+def getCopy(maxTime=2):
     #maxTime = 3  # 3秒复制 调用copy() 不管结果对错
     while (maxTime > 0):
         maxTime = maxTime - 0.5
@@ -58,7 +58,6 @@ def getExcelData(excelUrl):
 
 def getresult(str):
     #datas= getExcelData(excelUrl)
-
     dataResult=ExcelData('','','')
     contains_key=False
     for data in datas:
@@ -164,7 +163,7 @@ def getresult_2(name,type):
             resultDatas.append(data)
         if(len(data.keyArray)==1 and data.keyArray[0]==name and data.compareType=='1.0'):
             return data.result
-    for d in resultDatas:
+    for d in resultDatas:#贪婪匹配 后面覆盖前面的
         hasResult = False
         for datatype in d.typeArray:
             if(datatype in name):
@@ -173,16 +172,46 @@ def getresult_2(name,type):
             else:
                 hasResult=False
             if (datatype in type or type == datatype):
-                if(data.compareType=='0.0' and type!=datatype):#给电力电缆用————————-
-                    hasResult=False
-                    break
+
                 hasResult=True
             else:
                 hasResult=False
                 break
-        if(hasResult):
+        if(hasResult):#贪婪匹配 后面覆盖前面的
             result=d.result
             result_data=d
+
+    # for 电力电缆
+    for d in resultDatas:#非贪婪 有1个解就跳出
+        if(d.compareType=='0.0'):
+            if(type==''):
+                break
+            hasResult_type=False
+            if (len(d.typeArray) == 1):
+                if (type == d.typeArray[0]):
+                    hasResult_type = True
+            else:
+                split_type_string = type
+                for datatype in d.typeArray:
+                    split_type_string= split_type_string.replace(datatype,'')
+                split_type_string= split_type_string.replace('-','')
+                split_type_string= split_type_string.replace(' ','')
+                split_type_string = split_type_string.replace('mm2', '')
+
+                if(len(split_type_string)>0):
+                    #print(split_type_string)
+                    hasResult_type=False
+                elif(len(split_type_string)==0):
+                    hasResult_type=True
+
+
+            if (hasResult_type):
+                result = d.result
+                result_data = d
+                break#非贪婪 有1个解就跳出
+            else:
+                result=''
+                result_data=ExcelData('','','')
     # print('-------')
     # print(result_data.keyArray)
     # print(result_data.typeArray)
@@ -201,14 +230,15 @@ def tapkey(key,count=1):
 def Do():
     if start:
         #主代码---------------
-        maxTime = 3#3秒复制 调用copy() 不管结果对错
-        while (maxTime > 0):
-            maxTime = maxTime - 0.5
-            time.sleep(0.5)
-            #print('doing')
-            copy()
-
-        targetName=pyperclip.paste()
+        # maxTime = 3#3秒复制 调用copy() 不管结果对错
+        # while (maxTime > 0):
+        #     maxTime = maxTime - 0.5
+        #     time.sleep(0.5)
+        #     #print('doing')
+        #     copy()
+        #
+        # targetName=pyperclip.paste()
+        targetName=getCopy()
 
 
         dataResult=getresult(pyperclip.paste())
@@ -265,54 +295,10 @@ def Do():
 
             #判断型号 TODO---------------------
             return
-            # tapkey(k.enter_key)
-            # while (maxTime > 0):
-            #     maxTime = maxTime - 0.5
-            #     time.sleep(0.5)
-            #     print('doing')
-            #     copy()
-            # targetType = pyperclip.paste()
-            # result_2= getresult_2(targetName, targetType)
-            # if(result_2==''):
-            #
-            # if(targetType==''):
-            #     tapkey(k.escape_key)
-            #     tapkey(k.down_key)
-            #     tapkey(k.left_key)
-            #     tapkey(k.enter_key)
-            #
-            # else:
-            #
-            #     r2 = getresult_2(targetName,targetType)
-            #     if(r2==''):
-            #         print('not same type')
-            #     else:
-            #         print('same')
-
-            # 找到了 输入 to do ---------------------
-            # k.tap_key(k.escape_key)
-            # k.tap_key(k.right_key,5)
-            # k.tap_key(k.enter_key)
-            # k.type_string(r)
-            # k.tap_key(k.enter_key)
 
 
 
-def saveToExcel(name,type,value):
-    #saveworkbook = xlrd.open_workbook(saveExcelUrl)
-    #wb = excel_copy(saveworkbook)  # 利用xlutils.copy下的copy函数复制
-    wb= load_workbook(filename=saveExcelUrl)
-    worksheet=wb.active
-    worksheet=wb['Sheet1']
 
-    global rowMaxCount
-    #print(rowMaxCount)
-    worksheet.cell(row=rowMaxCount+1,column=1,value=name)
-    worksheet.cell(row=rowMaxCount+1,column=2,value=type)
-    worksheet.cell(row=rowMaxCount+1,column=3,value=value)
-
-    wb.save(saveExcelUrl)
-    rowMaxCount=rowMaxCount+1
 
 #我的代码
 def onpressed(Key):
@@ -320,27 +306,16 @@ def onpressed(Key):
         #print(Key)
         if (Key==keyboard.Key.caps_lock):#开始
             global start
-            start=True
-            print('go')
+            if(start==True):
+                start=False
+                print('stop')
+            else:
+                start=True
+                print('go')
         if (Key==keyboard.Key.f3):#结束
             sys.exit()
 
-        if (Key == keyboard.Key.f4):
-            if(not start):
-                targetName = getCopy(1)
-                tapkey(k.enter_key)
-                targetType = getCopy(1)
-                tapkey(k.enter_key, 4)
-                targetValue=getCopy(1)
-                if(targetType==targetName):
-                    targetType=''
-                saveToExcel(targetName,targetType,targetValue)
-                tapkey(k.enter_key)
-                tapkey(k.escape_key)
-                tapkey(k.left_key,6)
-                tapkey(k.enter_key)
-                print('save  '+targetName)
-
+        #print(Key)
         return True
 
 
@@ -352,7 +327,6 @@ def main():
         Do()
 
 
-
 if __name__ == '__main__':
     k = PyKeyboard()
     m = PyMouse()
@@ -360,10 +334,6 @@ if __name__ == '__main__':
     start=False
     excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
     #excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
-    #saveExcelUrl = r"C:\Users\123\Desktop\广联达\安装\save.xlsx"  # to do-------------
-    saveExcelUrl = r"C:\Users\Administrator\Desktop\save.xlsx"  # to do-------------
-    saveworkbook = xlrd.open_workbook(saveExcelUrl)
-    rowMaxCount=saveworkbook.sheets()[0].nrows
 
     datas= getExcelData(excelUrl)
 
@@ -378,5 +348,4 @@ if __name__ == '__main__':
 
     with keyboard.Listener(on_press=onpressed) as listener:
         listener.join()
-
 
