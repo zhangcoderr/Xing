@@ -10,6 +10,7 @@ import  pyperclip
 from pynput import mouse,keyboard
 import threading
 import sys
+import re
 from openpyxl import Workbook,load_workbook
 
 def copy():
@@ -86,15 +87,43 @@ def getresult(str):
     #print(dataResult)
     return dataResult
 
-def calc_result(data,type,keyword):
+def calc_result(data,name,type,keyword):
     result=0
     A=0
     B=0
     array=[]
+    isCircle=False
+
     try:
-        array=type.split(keyword)
+        regex_string = ''
+        if (keyword in name):
+            regex_string=name
+        elif(keyword in type):
+            regex_string=type
+        else:
+            result=''
+            return result
+        if ('φ' in type):  # 对圆单独处理 φ670格式固定----------todo
+            isCircle = True
+            regex_string=type.replace('φ','')
+
+        if(isCircle):
+            array.append(regex_string)
+            array.append(regex_string)
+        else:
+            compile = r'\d+[*xX×]{1,1}\d+'
+            split_string=''
+
+            regex = re.compile(compile)
+            #TEMP=regex.search(regex_string)
+            split_string = regex.search(regex_string).group()
+
+            array=split_string.split(keyword)
+
+            #array=type.split(keyword)
         A=float(array[0].strip())/1000
         B=float(array[1].strip())/1000
+
         if (data.compareType == '2.0'):
             calc_array=str(data.result).split('$')
             X=int(calc_array[0])
@@ -136,7 +165,11 @@ def calc_result(data,type,keyword):
         print('计算规则无法识别')
         print('key:'+keyword)
     finally:
-        result=str(result)
+        if (isCircle):
+            result = str(result * 1.15)
+        else:
+            result=str(result)
+
     print(result)
     return result
 
@@ -197,7 +230,7 @@ def getresult_2(name,type):
                 split_type_string= split_type_string.replace('-','')
                 split_type_string= split_type_string.replace(' ','')
                 split_type_string = split_type_string.replace('mm2', '')
-
+                split_type_string = split_type_string.replace('1KV', '')
                 if(len(split_type_string)>0):
                     #print(split_type_string)
                     hasResult_type=False
@@ -219,7 +252,7 @@ def getresult_2(name,type):
     # print('-------')
     if(result_data.compareType=='2.0' or result_data.compareType=='3.0' or result_data.compareType=='4.0' or result_data.compareType=='5.0'):
 
-        result= calc_result(result_data,type,result_data.typeArray[0])
+        result= calc_result(result_data,name,type,result_data.typeArray[0])
     return result
 
 def tapkey(key,count=1):
