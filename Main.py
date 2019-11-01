@@ -31,6 +31,31 @@ def getCopy(maxTime=2):
     return result
 
 
+
+replaceDic=\
+    {
+        'WDZN-':'WDZCN-',
+        '-BY-':'-BYJ-',
+        '-BYR-':'-BYJR-',
+        '-RYS-':'-RVS-',
+        'TBTRZY-':'BTTVZ-',
+        'WDZB-':'WDZBN-',
+        'WDZN-':'WDZCN-',
+        'WDZ-':'WDZC-',
+        'FS-':'',
+        '-KYY-':'-KYJY-',
+        '-BYRJ-':'-BYJR-',
+        'WDZCN-RVS-':'NH-RVS-',
+        'WDZBN-RVS-':'NH-RVS-',
+    }
+def typeStringReplace(typeString):
+
+    for key in replaceDic:
+        if(key in typeString):
+            typeString= typeString.replace(key,replaceDic[key])
+    return typeString
+
+
 class ExcelData:
     def __init__(self,keyArray,result,typeArray,compareType=''):
         self.keyArray=keyArray
@@ -180,9 +205,13 @@ def getresult_2(name,type):
     result=''
     result_data=ExcelData('','','')
     resultDatas=[]
+    pre_type=type
+    type = typeStringReplace(type)
+
     for data in datas:
         contains_key = False
-
+        if(data.keyArray[0]=='矿物绝缘电缆终端头'):
+            a=1
         for key in data.keyArray:
             if(key==''): continue
             if(key in name):
@@ -195,7 +224,17 @@ def getresult_2(name,type):
         if(contains_key and data.compareType!='1.0'):
             resultDatas.append(data)
         if(len(data.keyArray)==1 and data.keyArray[0]==name and data.compareType=='1.0'):
-            return data.result
+            #FOR TEST----------type in 则匹配todo-----------
+            total_same=False
+            for datatype in data.typeArray:
+                if (datatype in type):
+                    total_same = True
+                else:
+                    total_same = False
+                    break
+
+            if(total_same):
+                return data.result
     for d in resultDatas:#贪婪匹配 后面覆盖前面的
         hasResult = False
         for datatype in d.typeArray:
@@ -217,11 +256,12 @@ def getresult_2(name,type):
     # for 电力电缆
     for d in resultDatas:#非贪婪 有1个解就跳出
         if(d.compareType=='0.0'):
+
             if(type==''):
                 break
             hasResult_type=False
             if (len(d.typeArray) == 1):
-                if (type == d.typeArray[0]):
+                if (type == d.typeArray[0] or pre_type==d.typeArray[0]):
                     hasResult_type = True
             else:
                 split_type_string = type
@@ -231,6 +271,7 @@ def getresult_2(name,type):
                 split_type_string= split_type_string.replace(' ','')
                 split_type_string = split_type_string.replace('mm2', '')
                 split_type_string = split_type_string.replace('1KV', '')
+
                 if(len(split_type_string)>0):
                     #print(split_type_string)
                     hasResult_type=False
@@ -243,7 +284,7 @@ def getresult_2(name,type):
                 result_data = d
                 break#非贪婪 有1个解就跳出
             else:
-                result=''
+                result=''#?不能删
                 result_data=ExcelData('','','')
     # print('-------')
     # print(result_data.keyArray)
