@@ -34,19 +34,32 @@ def getCopy(maxTime=2):
 
 replaceDic=\
     {
-        'WDZN-':'WDZCN-',
+        'WDZN-':'NH-',
         '-BY-':'-BYJ-',
         '-BYR-':'-BYJR-',
         '-RYS-':'-RVS-',
         'TBTRZY-':'BTTVZ-',
         'WDZB-':'WDZBN-',
-        'WDZN-':'WDZCN-',
+        #'WDZN-':'WDZCN-',
         'WDZ-':'WDZC-',
         'FS-':'',
         '-KYY-':'-KYJY-',
         '-BYRJ-':'-BYJR-',
         'WDZCN-RVS-':'NH-RVS-',
         'WDZBN-RVS-':'NH-RVS-',
+        '-RYJS-':'-RVS-',
+        'BBTRZ-':'BTTVZ-',
+        '-0.6/1KV':'',
+        'WDZAN-RVS-':'NH-RVS-',
+        'WDZAN-RYJS':'NH-RVS',
+        'WDZAN-KVV':'NH-KVV',
+        'ZB-YJV':'ZRB-YJV',
+        'ZBN-YJV':'NH-YJV',
+        'ZBN-KVV':'HN-KVV',
+
+
+
+
     }
 def typeStringReplace(typeString):
 
@@ -210,8 +223,7 @@ def getresult_2(name,type):
 
     for data in datas:
         contains_key = False
-        if(data.keyArray[0]=='矿物绝缘电缆终端头'):
-            a=1
+
         for key in data.keyArray:
             if(key==''): continue
             if(key in name):
@@ -362,6 +374,8 @@ def Do():
                     k.type_string(result_2)
                     tapkey(k.enter_key)
                     time.sleep(5)
+
+
                     tapkey(k.escape_key)
                     tapkey(k.left_key, 11)#适当修改
                     tapkey(k.enter_key,3)#适当修改
