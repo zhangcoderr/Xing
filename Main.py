@@ -59,6 +59,20 @@ replaceDic=\
         'ZBN-YJV':'NH-YJV',
         'ZBN-KVV':'HN-KVV',
         'WDZB-KYJ':'HN-KVV',
+        'ZN-RVS':'NH-RVS',
+
+        'ZR-RVS':'ZRC-RVS',
+        'ZR-RVVP':'ZRC-RVVP',
+        'NHKVV':'NH-KVV',
+        '-BYR':'-BYJ',#????????
+        'NHBV':'NH-BV',
+        'ZN-BYJ':'WDZCN-BYJ',
+        'ZN-BYJR':'WDZCN-BYJR',
+        'WDZ-YJV':'WDZC-YJY',
+        'WDZN-YJY-':'WDZCN-YJY-',
+        'WDZB-YJV-':'WDZB-YJY-',
+        'WDZN-YJE-':'WDZCN-YJY-',
+
 
 
 
@@ -134,7 +148,7 @@ def calc_result(data,name,type,keyword):
     B=0
     array=[]
     isCircle=False
-
+    compareType=data.compareType#匹配规则
     try:
         regex_string = ''
         if (keyword in name):
@@ -144,9 +158,14 @@ def calc_result(data,name,type,keyword):
         else:
             result=''
             return result
-        if ('φ' in type):  # 对圆单独处理 φ670格式固定----------todo
+        if (keyword in type and 'cir' in compareType):  # 对圆单独处理 φ670格式固定----------todo
             isCircle = True
-            regex_string=type.replace('φ','')
+            regex_string=type.replace(keyword,'')
+            compareType=compareType.replace('cir','')
+
+        # if ('φ' in type):  # 对圆单独处理 φ670格式固定----------todo
+        #     isCircle = True
+        #     regex_string=type.replace('φ','')
 
         if(isCircle):
             array.append(regex_string)
@@ -165,13 +184,13 @@ def calc_result(data,name,type,keyword):
         A=float(array[0].strip())/1000
         B=float(array[1].strip())/1000
 
-        if (data.compareType == '2.0'):
+        if (compareType == '2.0' or compareType == '2'):
             calc_array=str(data.result).split('$')
             X=int(calc_array[0])
             Y=int(calc_array[1])
 
             result=A*B*X+Y
-        elif(data.compareType=='3.0'):
+        elif(compareType=='3.0'or compareType == '3'):
             clac_arrays=str(data.result).split('/')
             calc_array0=clac_arrays[0].split('$')
             calc_array1=clac_arrays[1].split('$')
@@ -184,7 +203,7 @@ def calc_result(data,name,type,keyword):
                 X = int(calc_array1[0])
                 Y = int(calc_array1[1])
             result=A*B*X+Y
-        elif(data.compareType=='4.0'):
+        elif(compareType=='4.0'or compareType == '4'):
             try:
                 L=float(array[2].strip())/1000
             except:
@@ -192,7 +211,7 @@ def calc_result(data,name,type,keyword):
                 L=1
             clac=float(data.result)
             result=(A*B+A*L+B*L)*2*clac
-        elif(data.compareType=='5.0'):
+        elif(compareType=='5.0'or compareType == '5'):
             calc_array = str(data.result).split('$')
             X = int(calc_array[0])
             Y = int(calc_array[1])
@@ -309,8 +328,9 @@ def getresult_2(name,type):
     # print(result_data.typeArray)
     # print(result_data.result)
     # print('-------')
-    if(result_data.compareType=='2.0' or result_data.compareType=='3.0' or result_data.compareType=='4.0' or result_data.compareType=='5.0'):
-
+    #if(result_data.compareType=='2.0' or result_data.compareType=='3.0' or result_data.compareType=='4.0' or result_data.compareType=='5.0'):
+    if(result_data.compareType!=''):
+        print('done!!!!!!!')
         result= calc_result(result_data,name,type,result_data.typeArray[0])
     return result
 
@@ -350,7 +370,7 @@ def Do():
 
                 k.type_string(dataResult.result)
                 tapkey(k.enter_key)
-                time.sleep(10)
+                time.sleep(5)
 
                 tapkey(k.escape_key)
                 tapkey(k.left_key, 11)#适当修改
@@ -379,7 +399,7 @@ def Do():
                     tapkey(k.enter_key,4)#适当修改
                     k.type_string(result_2)
                     tapkey(k.enter_key)
-                    time.sleep(10)
+                    time.sleep(5)
 
 
                     tapkey(k.escape_key)
@@ -427,6 +447,8 @@ if __name__ == '__main__':
 
     start=False
     excelUrl = r"C:\Users\Administrator\Desktop\Xing.xlsx"#to do-------------
+    #excelUrl = r"C:\Users\123\Desktop\Xing.xlsx"#to do-------------
+
     #excelUrl = r"C:\Users\123\Desktop\广联达\安装\Xing.xlsx"  # to do-------------
 
     datas= getExcelData(excelUrl)
@@ -442,4 +464,4 @@ if __name__ == '__main__':
 
     with keyboard.Listener(on_press=onpressed) as listener:
         listener.join()
- 
+
