@@ -1,0 +1,68 @@
+# coding=utf-8
+from pykeyboard import PyKeyboard
+from pymouse import PyMouse
+import time
+import pyHook
+import pythoncom
+import xlrd
+import xlwt
+import  pyperclip
+from pynput import mouse,keyboard
+import threading
+import sys
+import re
+from openpyxl import Workbook,load_workbook
+
+
+
+def copy():
+    k.press_key(k.control_l_key)
+    k.tap_key("c")  # 改小写！！！！ 大写的话由于单进程会触发shift键 ctrl键就失效了
+    k.release_key(k.control_l_key)
+
+def tapkey(key, count=1, waitTime=0.05):
+    for i in range(0, count):
+        k.tap_key(key)
+        time.sleep(waitTime)
+
+def Paste_Ch(string):
+    pyperclip.copy(string)
+    time.sleep(0.05)
+    k.press_key(k.control_key)
+    k.tap_key('v')
+    k.release_key(k.control_key)
+
+def getCopy(noresult=None,maxTime=1.3,isDone=False):
+    # maxTime = 3  # 3秒复制 调用copy() 不管结果对错
+
+    if(maxTime<=0 or isDone):
+        return noresult
+    pyperclip.copy('')
+    time.sleep(0.3)
+    # print('doing')
+    copy()
+    result = pyperclip.paste()
+    #print('debug:'+str(result))
+    if(result==''):
+        return getCopy(noresult,maxTime-0.3,False)
+    else:
+        return getCopy(result,maxTime-0.3,True)
+
+    return result
+
+#筛选处理字符串
+while(True):
+    time.sleep(0.5)
+    k=PyKeyboard()
+    tapkey(k.enter_key)
+    word=getCopy()
+
+    tapkey(k.backspace_key)
+    word1=str(word).replace('1.','')
+    word2=word1.replace('安装','')
+    word2=word2.replace('敷设','')
+    word2 = word2.replace('公称直径≤', 'DN ')
+    print(word2)
+    #k.type_string(word2)
+    Paste_Ch(word2)
+    tapkey(k.down_key)
